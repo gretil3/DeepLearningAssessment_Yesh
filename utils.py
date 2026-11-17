@@ -1,4 +1,4 @@
-"""Shared helpers: wall-clock timing, JSON I/O, training logs, and checkpoints."""
+"""Shared helpers: wall-clock timing, JSON I/O, training logs, checkpoints, and figures."""
 
 import json
 import time
@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 import torch
+from matplotlib.figure import Figure
 from torch import nn
 
 import configs
@@ -129,3 +130,19 @@ def load_checkpoint(model: nn.Module, name: str) -> nn.Module:
     state = torch.load(path, map_location=configs.DEVICE, weights_only=True)
     model.load_state_dict(state)
     return model.to(configs.DEVICE).eval()
+
+
+def save_figure(fig: Figure, name: str) -> Path:
+    """Save a figure as a high-resolution PNG in ``outputs/figures/``.
+
+    Args:
+        fig: Matplotlib figure to save.
+        name: File name without extension.
+
+    Returns:
+        The path of the PNG file.
+    """
+    path = configs.FIGURE_DIR / f"{name}.png"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=configs.FIGURE_DPI, bbox_inches="tight")
+    return path

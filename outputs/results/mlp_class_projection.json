@@ -1,0 +1,89 @@
+{
+  "experiment": "mlp_class_projection",
+  "pixel_min": 0.015230359509587288,
+  "pixel_max": 0.9738330841064453,
+  "pixel_mean": 0.4642845392227173,
+  "mean_corr_with_class_mean": 0.1771532223559916,
+  "classifier_agrees_with_class": 6,
+  "per_class": [
+    {
+      "class": "T-shirt/top",
+      "corr_with_class_mean": 0.027679329738020897,
+      "classifier_prediction": "T-shirt/top"
+    },
+    {
+      "class": "Trouser",
+      "corr_with_class_mean": 0.07443305850028992,
+      "classifier_prediction": "Trouser"
+    },
+    {
+      "class": "Pullover",
+      "corr_with_class_mean": 0.2752196490764618,
+      "classifier_prediction": "Pullover"
+    },
+    {
+      "class": "Dress",
+      "corr_with_class_mean": 0.07374114543199539,
+      "classifier_prediction": "Bag"
+    },
+    {
+      "class": "Coat",
+      "corr_with_class_mean": 0.4072907865047455,
+      "classifier_prediction": "Bag"
+    },
+    {
+      "class": "Sandal",
+      "corr_with_class_mean": 0.2915326952934265,
+      "classifier_prediction": "Sandal"
+    },
+    {
+      "class": "Shirt",
+      "corr_with_class_mean": -0.01198501605540514,
+      "classifier_prediction": "Shirt"
+    },
+    {
+      "class": "Sneaker",
+      "corr_with_class_mean": 0.28247225284576416,
+      "classifier_prediction": "Bag"
+    },
+    {
+      "class": "Bag",
+      "corr_with_class_mean": 0.16703791916370392,
+      "classifier_prediction": "Bag"
+    },
+    {
+      "class": "Ankle boot",
+      "corr_with_class_mean": 0.18411040306091309,
+      "classifier_prediction": "Bag"
+    }
+  ],
+  "weight_orthogonality": {
+    "W1": {
+      "shape": [
+        256,
+        784
+      ],
+      "rank": 256,
+      "rel_dev_wwt_from_identity": 23.148252487182617,
+      "rel_dev_wtw_from_identity": 13.252866744995117
+    },
+    "W2": {
+      "shape": [
+        64,
+        256
+      ],
+      "rank": 64,
+      "rel_dev_wwt_from_identity": 6.549759864807129,
+      "rel_dev_wtw_from_identity": 3.387450695037842
+    },
+    "W3": {
+      "shape": [
+        10,
+        64
+      ],
+      "rank": 10,
+      "rel_dev_wwt_from_identity": 1.9947255849838257,
+      "rel_dev_wtw_from_identity": 1.210560917854309
+    }
+  }
+}
