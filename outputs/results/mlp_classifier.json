@@ -1,0 +1,7 @@
+{
+  "model": "mlp_classifier",
+  "test_loss": 0.3183836969648089,
+  "test_acc": 0.8855714285714286,
+  "target_acc": 0.88,
+  "target_met": true
+}

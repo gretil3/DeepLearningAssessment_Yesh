@@ -33,8 +33,21 @@ python -c "import data; tr, va, te = data.get_dataloaders(); print(len(tr.datase
 
 Expected output: `56000 7000 7000`.
 
-Training scripts are run as modules from the repository root, for example
-`python -m train.train_vae`. Each script is listed here once it is added.
+Training scripts are run as modules from the repository root. Each script saves its
+checkpoint, per-epoch loss, and per-epoch training time.
+
+| Command | What it does | Outputs |
+|---|---|---|
+| `python -m train.train_mlp` | Trains the 784→256→64→10 MLP classifier (target test accuracy ≥ 88%) | `outputs/checkpoints/mlp_classifier.pt`, `outputs/logs/mlp_classifier.json`, `outputs/results/mlp_classifier.json` |
+
+Experiments are run the same way and read the trained checkpoints, so run the matching
+training script first.
+
+| Command | What it does | Outputs |
+|---|---|---|
+| `python -m experiments.mlp_class_projection` | Step 2: back-projects one-hot class vectors to pixels with transposed MLP weights (no training) and measures weight orthogonality | `outputs/figures/mlp_class_projection.png`, `outputs/results/mlp_class_projection.json` |
+
+Each script is listed here once it is added.
 
 ## Project structure
 
@@ -42,7 +55,10 @@ Training scripts are run as modules from the repository root, for example
 |---|---|
 | `configs.py` | Single source of seed, paths, device, batch size, and split ratios |
 | `data.py` | `set_seed()` and `get_dataloaders()` (merged 70k samples, 80/10/10 split) |
-| `utils.py` | `Timer`, JSON helper, `TrainingHistory` (loss and time per epoch), checkpoint save/load |
+| `utils.py` | `Timer`, JSON helper, `TrainingHistory` (loss and time per epoch), checkpoint save/load, `save_figure` |
+| `models/mlp_classifier.py` | Bias-free MLP classifier with an `encode()` method returning the 64-d latent feature |
+| `train/train_mlp.py` | Training script for the MLP classifier (keeps the best epoch by validation loss) |
+| `experiments/mlp_class_projection.py` | Step 2 of the MLP experiment: class-vector back-projection through W^T and orthogonality check |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |
@@ -50,5 +66,4 @@ Training scripts are run as modules from the repository root, for example
 | `outputs/figures/` | Generated figures |
 | `outputs/results/` | Metric tables (CSV/JSON) |
 
-`outputs/` subfolders are created on first write. The `models/`, `train/`, and
-`experiments/` packages will be added with their modules.
+`outputs/` subfolders are created on first write.
