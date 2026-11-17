@@ -1,1 +1,54 @@
-Tugas Deep Learning
+# Comparative Study of Generative Models (Deep Learning D6421, Session 07)
+
+A PyTorch study that compares six generative models on Fashion-MNIST: Vanilla
+Autoencoder, Sparse Autoencoder, VAE, Vanilla GAN, DCGAN, and DDPM. An MLP
+classifier is also trained to show why discriminative features cannot be used
+directly for image generation.
+
+All models share the same data split, batch size, and random seed (42), and every
+metric is computed on the held-out test set.
+
+> Work in progress: modules are added one at a time. This README is updated with each one.
+
+## Installation
+
+Requires Python 3.10+.
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate        # Linux/macOS: source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Fashion-MNIST is downloaded automatically by `torchvision` into `./data` on first use.
+The code picks CUDA when available and falls back to CPU, so it runs locally and on Colab.
+
+## Usage
+
+Quick check of the data pipeline (prints the size of each split):
+
+```bash
+python -c "import data; tr, va, te = data.get_dataloaders(); print(len(tr.dataset), len(va.dataset), len(te.dataset))"
+```
+
+Expected output: `56000 7000 7000`.
+
+Training scripts are run as modules from the repository root, for example
+`python -m train.train_vae`. Each script is listed here once it is added.
+
+## Project structure
+
+| Path | Description |
+|---|---|
+| `configs.py` | Single source of seed, paths, device, batch size, and split ratios |
+| `data.py` | `set_seed()` and `get_dataloaders()` (merged 70k samples, 80/10/10 split) |
+| `utils.py` | `Timer`, JSON helper, `TrainingHistory` (loss and time per epoch), checkpoint save/load |
+| `requirements.txt` | Pinned dependencies |
+| `data/` | Downloaded dataset (git-ignored) |
+| `outputs/checkpoints/` | Model weights (git-ignored) |
+| `outputs/logs/` | Training logs as JSON |
+| `outputs/figures/` | Generated figures |
+| `outputs/results/` | Metric tables (CSV/JSON) |
+
+`outputs/` subfolders are created on first write. The `models/`, `train/`, and
+`experiments/` packages will be added with their modules.
