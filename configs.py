@@ -41,3 +41,10 @@ MLP_HIDDEN_DIMS: tuple[int, int] = (256, 64)
 MLP_LR: float = 1e-3
 MLP_EPOCHS: int = 20
 MLP_TARGET_ACC: float = 0.88  # minimum test accuracy required by the assignment
+
+# --- Vanilla autoencoder (784 -> 256 -> 64 -> 256 -> 784) ---
+# The frozen-latent decoder experiment reuses these values so that only the encoder differs.
+AE_HIDDEN_DIM: int = 256
+AE_LATENT_DIM: int = 64
+AE_LR: float = 1e-3
+AE_EPOCHS: int = 20
