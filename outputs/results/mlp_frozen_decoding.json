@@ -1,0 +1,15 @@
+{
+  "experiment": "mlp_frozen_decoding",
+  "latent_dim": 64,
+  "frozen_mlp_decoder": {
+    "mse": 0.01671836919756742,
+    "psnr": 18.537643432617188,
+    "ssim": 0.7159894704818726
+  },
+  "vanilla_ae": {
+    "mse": 0.007024189356812235,
+    "psnr": 22.610363006591797,
+    "ssim": 0.8553019762039185
+  },
+  "mse_ratio_frozen_over_ae": 2.380113682634926
+}
