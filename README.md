@@ -39,6 +39,7 @@ checkpoint, per-epoch loss, and per-epoch training time.
 | Command | What it does | Outputs |
 |---|---|---|
 | `python -m train.train_mlp` | Trains the 784→256→64→10 MLP classifier (target test accuracy ≥ 88%) | `outputs/checkpoints/mlp_classifier.pt`, `outputs/logs/mlp_classifier.json`, `outputs/results/mlp_classifier.json` |
+| `python -m train.train_ae` | Trains the Vanilla Autoencoder (latent 64) with an MSE loss and reports test MSE/PSNR/SSIM | `outputs/checkpoints/vanilla_ae.pt`, `outputs/logs/vanilla_ae.json`, `outputs/results/vanilla_ae.json` |
 
 Experiments are run the same way and read the trained checkpoints, so run the matching
 training script first.
@@ -48,6 +49,7 @@ training script first.
 | `python -m experiments.mlp_class_projection` | Step 2: back-projects one-hot class vectors to pixels with transposed MLP weights (no training) and measures weight orthogonality | `outputs/figures/mlp_class_projection.png`, `outputs/results/mlp_class_projection.json` |
 
 | `python -m experiments.mlp_latent_projection` | Step 3: encodes test images to z_MLP, back-projects with W^T, and scores the result with MSE/PSNR/SSIM against the originals | `outputs/figures/mlp_latent_projection.png`, `outputs/results/mlp_latent_projection.json` |
+| `python -m experiments.mlp_frozen_decoding` | Step 4: freezes the MLP classifier, trains a 64→256→784 decoder on z_MLP, and compares it with the Vanilla AE (needs `train_mlp` and `train_ae` first) | `outputs/checkpoints/frozen_latent_decoder.pt`, `outputs/logs/frozen_latent_decoder.json`, `outputs/figures/mlp_frozen_decoding.png`, `outputs/results/mlp_frozen_decoding.json` |
 
 Each script is listed here once it is added.
 
@@ -63,6 +65,10 @@ Each script is listed here once it is added.
 | `experiments/mlp_class_projection.py` | Step 2 of the MLP experiment: class-vector back-projection through W^T and orthogonality check |
 | `metrics.py` | `reconstruction_metrics()`: test-set MSE, PSNR (per-image mean), and SSIM for any reconstruction function |
 | `experiments/mlp_latent_projection.py` | Step 3 of the MLP experiment: latent transpose projection of real test images |
+| `models/vanilla_ae.py` | `VanillaAutoencoder` and the `MLPDecoder` it shares with the frozen-latent experiment |
+| `train/engine.py` | Shared training loop (`fit`): best epoch by validation loss, checkpoint, per-epoch loss and time log |
+| `train/train_ae.py` | Training script for the Vanilla Autoencoder |
+| `experiments/mlp_frozen_decoding.py` | Step 4 of the MLP experiment: frozen-latent decoder versus Vanilla AE |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |
