@@ -1,0 +1,14 @@
+{
+  "experiment": "mlp_latent_projection",
+  "num_test_images": 7000,
+  "latent_transpose_projection": {
+    "mse": 0.28719888136616256,
+    "psnr": 5.468809127807617,
+    "ssim": 0.05926533415913582
+  },
+  "test_mean_image_reference": {
+    "mse": 0.08738678645809607,
+    "psnr": 10.899245262145996,
+    "ssim": 0.16706271469593048
+  }
+}

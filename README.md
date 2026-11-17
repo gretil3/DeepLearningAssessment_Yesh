@@ -47,6 +47,8 @@ training script first.
 |---|---|---|
 | `python -m experiments.mlp_class_projection` | Step 2: back-projects one-hot class vectors to pixels with transposed MLP weights (no training) and measures weight orthogonality | `outputs/figures/mlp_class_projection.png`, `outputs/results/mlp_class_projection.json` |
 
+| `python -m experiments.mlp_latent_projection` | Step 3: encodes test images to z_MLP, back-projects with W^T, and scores the result with MSE/PSNR/SSIM against the originals | `outputs/figures/mlp_latent_projection.png`, `outputs/results/mlp_latent_projection.json` |
+
 Each script is listed here once it is added.
 
 ## Project structure
@@ -59,6 +61,8 @@ Each script is listed here once it is added.
 | `models/mlp_classifier.py` | Bias-free MLP classifier with an `encode()` method returning the 64-d latent feature |
 | `train/train_mlp.py` | Training script for the MLP classifier (keeps the best epoch by validation loss) |
 | `experiments/mlp_class_projection.py` | Step 2 of the MLP experiment: class-vector back-projection through W^T and orthogonality check |
+| `metrics.py` | `reconstruction_metrics()`: test-set MSE, PSNR (per-image mean), and SSIM for any reconstruction function |
+| `experiments/mlp_latent_projection.py` | Step 3 of the MLP experiment: latent transpose projection of real test images |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |
