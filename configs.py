@@ -57,6 +57,13 @@ SPARSE_EPOCHS: int = 20
 # sparsity (~56 active units) without collapse; 1e-3 zeroes almost every unit.
 SPARSE_LAMBDA: float = 1e-4  # weight of the L1 penalty on the code h
 
+# --- Variational autoencoder (784 -> 256 -> (mu, logvar) of 64 -> 256 -> 784) ---
+VAE_HIDDEN_DIM: int = 256
+VAE_LATENT_DIM: int = 64
+VAE_LR: float = 1e-3
+VAE_EPOCHS: int = 20
+VAE_KL_WEIGHT: float = 1.0  # 1.0 is the standard ELBO (no beta-VAE re-weighting)
+
 # --- Latent sampling (Step 5 of the MLP experiment) ---
 SAMPLING_GRID_SIDE: int = 4  # each figure panel shows a 4x4 grid = 16 images
 SAMPLING_NUM_EVAL: int = 1000  # samples used for the quantitative statistics

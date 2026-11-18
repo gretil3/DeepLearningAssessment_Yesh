@@ -41,6 +41,7 @@ checkpoint, per-epoch loss, and per-epoch training time.
 | `python -m train.train_mlp` | Trains the 784→256→64→10 MLP classifier (target test accuracy ≥ 88%) | `outputs/checkpoints/mlp_classifier.pt`, `outputs/logs/mlp_classifier.json`, `outputs/results/mlp_classifier.json` |
 | `python -m train.train_ae` | Trains the Vanilla Autoencoder (latent 64) with an MSE loss and reports test MSE/PSNR/SSIM | `outputs/checkpoints/vanilla_ae.pt`, `outputs/logs/vanilla_ae.json`, `outputs/results/vanilla_ae.json` |
 | `python -m train.train_sparse_ae` | Trains the Sparse Autoencoder (256-unit code, MSE + λ‖h‖₁ with λ = 1e-4) and reports test MSE/PSNR/SSIM and code sparsity | `outputs/checkpoints/sparse_ae.pt`, `outputs/logs/sparse_ae.json`, `outputs/results/sparse_ae.json` |
+| `python -m train.train_vae` | Trains the VAE (latent 64, negative ELBO = BCE + KL) and reports test MSE/PSNR/SSIM, KL, and active latent dimensions | `outputs/checkpoints/vae.pt`, `outputs/logs/vae.json`, `outputs/results/vae.json` |
 
 Experiments are run the same way and read the trained checkpoints, so run the matching
 training script first.
@@ -74,6 +75,8 @@ Each script is listed here once it is added.
 | `experiments/mlp_latent_sampling.py` | Step 5 of the MLP experiment: Gaussian sampling in the z_MLP space and its decoded images |
 | `models/sparse_ae.py` | `SparseAutoencoder`: 784 → 256 ReLU code `h` → 784 |
 | `train/train_sparse_ae.py` | Training script for the Sparse Autoencoder (L1 penalty on `h`, sparsity statistics) |
+| `models/vae.py` | `VAE`: probabilistic encoder (mu, logvar), reparameterisation, and the shared `MLPDecoder` |
+| `train/train_vae.py` | Training script for the VAE (negative ELBO, posterior statistics) |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |

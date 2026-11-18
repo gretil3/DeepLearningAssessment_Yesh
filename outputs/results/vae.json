@@ -1,0 +1,11 @@
+{
+  "model": "vae",
+  "latent_dim": 64,
+  "kl_weight": 1.0,
+  "test_neg_elbo": 243.1832853655134,
+  "mse": 0.013666510023111504,
+  "psnr": 19.4752254486084,
+  "ssim": 0.7607697248458862,
+  "mean_kl_per_image": 15.714372634887695,
+  "active_latent_dims": 16
+}
