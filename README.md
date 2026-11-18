@@ -50,6 +50,7 @@ training script first.
 
 | `python -m experiments.mlp_latent_projection` | Step 3: encodes test images to z_MLP, back-projects with W^T, and scores the result with MSE/PSNR/SSIM against the originals | `outputs/figures/mlp_latent_projection.png`, `outputs/results/mlp_latent_projection.json` |
 | `python -m experiments.mlp_frozen_decoding` | Step 4: freezes the MLP classifier, trains a 64→256→784 decoder on z_MLP, and compares it with the Vanilla AE (needs `train_mlp` and `train_ae` first) | `outputs/checkpoints/frozen_latent_decoder.pt`, `outputs/logs/frozen_latent_decoder.json`, `outputs/figures/mlp_frozen_decoding.png`, `outputs/results/mlp_frozen_decoding.json` |
+| `python -m experiments.mlp_latent_sampling` | Step 5: fits a diagonal Gaussian to z_MLP on the test set, samples it, decodes with the frozen decoder, and scores realism (needs `experiments.mlp_frozen_decoding` first) | `outputs/figures/mlp_latent_sampling.png`, `outputs/results/mlp_latent_sampling.json` |
 
 Each script is listed here once it is added.
 
@@ -69,6 +70,7 @@ Each script is listed here once it is added.
 | `train/engine.py` | Shared training loop (`fit`): best epoch by validation loss, checkpoint, per-epoch loss and time log |
 | `train/train_ae.py` | Training script for the Vanilla Autoencoder |
 | `experiments/mlp_frozen_decoding.py` | Step 4 of the MLP experiment: frozen-latent decoder versus Vanilla AE |
+| `experiments/mlp_latent_sampling.py` | Step 5 of the MLP experiment: Gaussian sampling in the z_MLP space and its decoded images |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |

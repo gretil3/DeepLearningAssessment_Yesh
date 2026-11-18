@@ -48,3 +48,7 @@ AE_HIDDEN_DIM: int = 256
 AE_LATENT_DIM: int = 64
 AE_LR: float = 1e-3
 AE_EPOCHS: int = 20
+
+# --- Latent sampling (Step 5 of the MLP experiment) ---
+SAMPLING_GRID_SIDE: int = 4  # each figure panel shows a 4x4 grid = 16 images
+SAMPLING_NUM_EVAL: int = 1000  # samples used for the quantitative statistics
