@@ -49,6 +49,14 @@ AE_LATENT_DIM: int = 64
 AE_LR: float = 1e-3
 AE_EPOCHS: int = 20
 
+# --- Sparse autoencoder (784 -> 256 sparse code h -> 784) ---
+SPARSE_HIDDEN_DIM: int = 256
+SPARSE_LR: float = 1e-3
+SPARSE_EPOCHS: int = 20
+# Picked from a short validation-set sweep over {0, 1e-5, 1e-4, 1e-3}: 1e-4 gives clear
+# sparsity (~56 active units) without collapse; 1e-3 zeroes almost every unit.
+SPARSE_LAMBDA: float = 1e-4  # weight of the L1 penalty on the code h
+
 # --- Latent sampling (Step 5 of the MLP experiment) ---
 SAMPLING_GRID_SIDE: int = 4  # each figure panel shows a 4x4 grid = 16 images
 SAMPLING_NUM_EVAL: int = 1000  # samples used for the quantitative statistics
