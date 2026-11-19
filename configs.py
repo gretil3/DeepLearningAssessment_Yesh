@@ -73,6 +73,15 @@ GAN_LR: float = 2e-4
 GAN_BETA1: float = 0.5  # the usual low beta1 for adversarial training
 GAN_EPOCHS: int = 50
 
+# --- DCGAN (convolutional generator and discriminator, z ~ N(0, I) of size 100) ---
+DCGAN_LATENT_DIM: int = 100
+DCGAN_BASE_CHANNELS: int = 64  # generator: 2x -> 1x -> 1 channel; discriminator: 1x -> 2x -> 1 logit
+DCGAN_LEAKY_SLOPE: float = 0.2
+DCGAN_INIT_STD: float = 0.02  # N(0, 0.02) weight initialisation from the DCGAN guidelines
+DCGAN_LR: float = 2e-4  # same optimizer settings as the Vanilla GAN, so only the architecture differs
+DCGAN_BETA1: float = 0.5
+DCGAN_EPOCHS: int = 50
+
 # --- Latent sampling (Step 5 of the MLP experiment) ---
 SAMPLING_GRID_SIDE: int = 4  # each figure panel shows a 4x4 grid = 16 images
 SAMPLING_NUM_EVAL: int = 1000  # samples used for the quantitative statistics

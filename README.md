@@ -43,6 +43,7 @@ checkpoint, per-epoch loss, and per-epoch training time.
 | `python -m train.train_sparse_ae` | Trains the Sparse Autoencoder (256-unit code, MSE + λ‖h‖₁ with λ = 1e-4) and reports test MSE/PSNR/SSIM and code sparsity | `outputs/checkpoints/sparse_ae.pt`, `outputs/logs/sparse_ae.json`, `outputs/results/sparse_ae.json` |
 | `python -m train.train_vae` | Trains the VAE (latent 64, negative ELBO = BCE + KL) and reports test MSE/PSNR/SSIM, KL, and active latent dimensions | `outputs/checkpoints/vae.pt`, `outputs/logs/vae.json`, `outputs/results/vae.json` |
 | `python -m train.train_gan` | Trains the Vanilla GAN (MLP generator and discriminator, z = 100, non-saturating BCE loss) for 50 epochs | `outputs/checkpoints/vanilla_gan_generator.pt`, `outputs/checkpoints/vanilla_gan_discriminator.pt`, `outputs/logs/vanilla_gan.json` |
+| `python -m train.train_dcgan` | Trains the DCGAN (strided-conv discriminator, transposed-conv generator, z = 100) for 50 epochs with the same loop and optimizer settings as the Vanilla GAN | `outputs/checkpoints/dcgan_generator.pt`, `outputs/checkpoints/dcgan_discriminator.pt`, `outputs/logs/dcgan.json` |
 
 Experiments are run the same way and read the trained checkpoints, so run the matching
 training script first.
@@ -81,6 +82,8 @@ Each script is listed here once it is added.
 | `models/gan.py` | `Generator` (100 → 256 → 512 → 1024 → 784) and `Discriminator` (logit output) of the Vanilla GAN |
 | `train/gan_engine.py` | Shared adversarial loop (`fit_gan`) for the Vanilla GAN and the DCGAN; logs D/G loss and D(x), D(G(z)) per epoch |
 | `train/train_gan.py` | Training script for the Vanilla GAN |
+| `models/dcgan.py` | `DCGANGenerator` (transposed convs, BatchNorm) and `DCGANDiscriminator` (strided convs, logit output) |
+| `train/train_dcgan.py` | Training script for the DCGAN (uses `train/gan_engine.py`) |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |
