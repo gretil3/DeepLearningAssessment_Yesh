@@ -64,6 +64,15 @@ VAE_LR: float = 1e-3
 VAE_EPOCHS: int = 20
 VAE_KL_WEIGHT: float = 1.0  # 1.0 is the standard ELBO (no beta-VAE re-weighting)
 
+# --- Vanilla GAN (MLP generator and discriminator, z ~ N(0, I) of size 100) ---
+GAN_LATENT_DIM: int = 100
+GAN_HIDDEN_DIMS: tuple[int, int, int] = (256, 512, 1024)  # generator widths; the discriminator mirrors them
+GAN_DROPOUT: float = 0.3  # discriminator only; keeps it from memorising the real images
+GAN_LEAKY_SLOPE: float = 0.2
+GAN_LR: float = 2e-4
+GAN_BETA1: float = 0.5  # the usual low beta1 for adversarial training
+GAN_EPOCHS: int = 50
+
 # --- Latent sampling (Step 5 of the MLP experiment) ---
 SAMPLING_GRID_SIDE: int = 4  # each figure panel shows a 4x4 grid = 16 images
 SAMPLING_NUM_EVAL: int = 1000  # samples used for the quantitative statistics
