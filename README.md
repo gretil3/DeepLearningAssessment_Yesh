@@ -44,6 +44,7 @@ checkpoint, per-epoch loss, and per-epoch training time.
 | `python -m train.train_vae` | Trains the VAE (latent 64, negative ELBO = BCE + KL) and reports test MSE/PSNR/SSIM, KL, and active latent dimensions | `outputs/checkpoints/vae.pt`, `outputs/logs/vae.json`, `outputs/results/vae.json` |
 | `python -m train.train_gan` | Trains the Vanilla GAN (MLP generator and discriminator, z = 100, non-saturating BCE loss) for 50 epochs | `outputs/checkpoints/vanilla_gan_generator.pt`, `outputs/checkpoints/vanilla_gan_discriminator.pt`, `outputs/logs/vanilla_gan.json` |
 | `python -m train.train_dcgan` | Trains the DCGAN (strided-conv discriminator, transposed-conv generator, z = 100) for 50 epochs with the same loop and optimizer settings as the Vanilla GAN | `outputs/checkpoints/dcgan_generator.pt`, `outputs/checkpoints/dcgan_discriminator.pt`, `outputs/logs/dcgan.json` |
+| `python -m train.train_ddpm` | Trains the DDPM (small UNet, T = 1000, noise prediction) with an EMA copy of the weights. About 7 minutes per epoch on a CPU, so a GPU (e.g. Colab) is advisable for the full run | `outputs/checkpoints/ddpm.pt`, `outputs/logs/ddpm.json` |
 
 Experiments are run the same way and read the trained checkpoints, so run the matching
 training script first.
@@ -84,6 +85,9 @@ Each script is listed here once it is added.
 | `train/train_gan.py` | Training script for the Vanilla GAN |
 | `models/dcgan.py` | `DCGANGenerator` (transposed convs, BatchNorm) and `DCGANDiscriminator` (strided convs, logit output) |
 | `train/train_dcgan.py` | Training script for the DCGAN (uses `train/gan_engine.py`) |
+| `models/unet.py` | Small time-conditioned `UNet` (three resolutions, skip connections) that predicts the noise |
+| `models/ddpm.py` | `GaussianDiffusion`: linear noise schedule, noise-prediction loss, and ancestral sampling |
+| `train/train_ddpm.py` | Training script for the DDPM (EMA weights, fixed-seed validation loss) |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |

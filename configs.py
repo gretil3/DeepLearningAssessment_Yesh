@@ -82,6 +82,18 @@ DCGAN_LR: float = 2e-4  # same optimizer settings as the Vanilla GAN, so only th
 DCGAN_BETA1: float = 0.5
 DCGAN_EPOCHS: int = 50
 
+# --- DDPM (small UNet predicting the noise epsilon, T = 1000) ---
+DDPM_TIMESTEPS: int = 1000
+DDPM_BETA_START: float = 1e-4  # linear noise schedule of Ho et al. (2020)
+DDPM_BETA_END: float = 0.02
+DDPM_BASE_CHANNELS: int = 32  # UNet widths: 32 at 28x28, then 64 at 14x14 and 7x7
+DDPM_TIME_EMBED_DIM: int = 128
+DDPM_GROUPS: int = 8  # GroupNorm groups; must divide every channel count
+DDPM_LR: float = 2e-4
+DDPM_GRAD_CLIP: float = 1.0  # max gradient norm, as in the DDPM reference implementation
+DDPM_EPOCHS: int = 15  # sized for a CPU run (~7 min/epoch); raise it on a GPU such as Colab
+DDPM_EMA_DECAY: float = 0.999  # sampling uses the EMA weights
+
 # --- Latent sampling (Step 5 of the MLP experiment) ---
 SAMPLING_GRID_SIDE: int = 4  # each figure panel shows a 4x4 grid = 16 images
 SAMPLING_NUM_EVAL: int = 1000  # samples used for the quantitative statistics
