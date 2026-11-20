@@ -17,12 +17,15 @@ from train import engine
 MODEL_NAME = "sparse_ae"
 
 
-def sparse_loss(model: SparseAutoencoder, images: torch.Tensor) -> torch.Tensor:
+def sparse_loss(
+    model: SparseAutoencoder, images: torch.Tensor, lam: float = configs.SPARSE_LAMBDA
+) -> torch.Tensor:
     """Reconstruction loss plus the L1 penalty on the code.
 
     Args:
         model: Sparse autoencoder.
         images: Image batch of shape (B, 1, 28, 28).
+        lam: Weight lambda of the L1 penalty (the sweep experiment varies it).
 
     Returns:
         Scalar loss.
@@ -31,7 +34,7 @@ def sparse_loss(model: SparseAutoencoder, images: torch.Tensor) -> torch.Tensor:
     # where h = ReLU(W x + b) is the code and ||h||_1 = sum_j |h_j|.
     code = model.encode(images)
     reconstruction = F.mse_loss(model.decode(code), images)
-    return reconstruction + configs.SPARSE_LAMBDA * code.abs().sum(dim=1).mean()
+    return reconstruction + lam * code.abs().sum(dim=1).mean()
 
 
 @torch.no_grad()
