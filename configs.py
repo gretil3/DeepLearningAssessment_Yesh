@@ -15,6 +15,7 @@ CHECKPOINT_DIR: Path = OUTPUT_DIR / "checkpoints"
 LOG_DIR: Path = OUTPUT_DIR / "logs"
 FIGURE_DIR: Path = OUTPUT_DIR / "figures"
 RESULT_DIR: Path = OUTPUT_DIR / "results"
+SAMPLE_DIR: Path = OUTPUT_DIR / "samples"  # cached generated images (git-ignored *.pt files)
 
 # --- Device ---
 DEVICE: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -97,3 +98,13 @@ DDPM_EMA_DECAY: float = 0.999  # sampling uses the EMA weights
 # --- Latent sampling (Step 5 of the MLP experiment) ---
 SAMPLING_GRID_SIDE: int = 4  # each figure panel shows a 4x4 grid = 16 images
 SAMPLING_NUM_EVAL: int = 1000  # samples used for the quantitative statistics
+
+# --- Model comparison (FID, latency, training stability) ---
+# FID is biased upwards for small sample sets; every model gets the same count so the
+# scores stay comparable. 1000 keeps the 1000-step DDPM affordable on a CPU.
+FID_NUM_SAMPLES: int = 1000
+LATENCY_BATCH_SIZE: int = 64  # the assignment reports inference latency per batch of 64 samples
+LATENCY_WARMUP: int = 3  # untimed calls that absorb one-off start-up cost
+LATENCY_REPEATS: int = 20  # timed calls whose mean is reported
+LATENCY_REPEATS_DDPM: int = 1  # one 1000-step sampling run already takes minutes on a CPU
+STABILITY_TAIL_EPOCHS: int = 10  # final epochs used to summarise how settled a loss is

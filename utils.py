@@ -59,6 +59,19 @@ def save_json(data: Any, path: Path) -> Path:
     return path
 
 
+def load_json(path: Path) -> Any:
+    """Read a JSON file written by :func:`save_json`.
+
+    Args:
+        path: File to read.
+
+    Returns:
+        The decoded JSON object.
+    """
+    with path.open(encoding="utf-8") as f:
+        return json.load(f)
+
+
 @dataclass
 class TrainingHistory:
     """Per-epoch losses and wall-clock times of one training run.

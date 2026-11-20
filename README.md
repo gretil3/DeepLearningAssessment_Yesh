@@ -44,7 +44,7 @@ checkpoint, per-epoch loss, and per-epoch training time.
 | `python -m train.train_vae` | Trains the VAE (latent 64, negative ELBO = BCE + KL) and reports test MSE/PSNR/SSIM, KL, and active latent dimensions | `outputs/checkpoints/vae.pt`, `outputs/logs/vae.json`, `outputs/results/vae.json` |
 | `python -m train.train_gan` | Trains the Vanilla GAN (MLP generator and discriminator, z = 100, non-saturating BCE loss) for 50 epochs | `outputs/checkpoints/vanilla_gan_generator.pt`, `outputs/checkpoints/vanilla_gan_discriminator.pt`, `outputs/logs/vanilla_gan.json` |
 | `python -m train.train_dcgan` | Trains the DCGAN (strided-conv discriminator, transposed-conv generator, z = 100) for 50 epochs with the same loop and optimizer settings as the Vanilla GAN | `outputs/checkpoints/dcgan_generator.pt`, `outputs/checkpoints/dcgan_discriminator.pt`, `outputs/logs/dcgan.json` |
-| `python -m train.train_ddpm` | Trains the DDPM (small UNet, T = 1000, noise prediction) with an EMA copy of the weights. About 7 minutes per epoch on a CPU, so a GPU (e.g. Colab) is advisable for the full run | `outputs/checkpoints/ddpm.pt`, `outputs/logs/ddpm.json` |
+| `python -m train.train_ddpm` | Trains the DDPM (small UNet, T = 1000, noise prediction) with an EMA copy of the weights. About 7 minutes per epoch on a CPU (408 s on average in the reported run), so a GPU (e.g. Colab) is advisable for the full run | `outputs/checkpoints/ddpm.pt`, `outputs/logs/ddpm.json` |
 
 Experiments are run the same way and read the trained checkpoints, so run the matching
 training script first.
@@ -52,10 +52,10 @@ training script first.
 | Command | What it does | Outputs |
 |---|---|---|
 | `python -m experiments.mlp_class_projection` | Step 2: back-projects one-hot class vectors to pixels with transposed MLP weights (no training) and measures weight orthogonality | `outputs/figures/mlp_class_projection.png`, `outputs/results/mlp_class_projection.json` |
-
 | `python -m experiments.mlp_latent_projection` | Step 3: encodes test images to z_MLP, back-projects with W^T, and scores the result with MSE/PSNR/SSIM against the originals | `outputs/figures/mlp_latent_projection.png`, `outputs/results/mlp_latent_projection.json` |
 | `python -m experiments.mlp_frozen_decoding` | Step 4: freezes the MLP classifier, trains a 64→256→784 decoder on z_MLP, and compares it with the Vanilla AE (needs `train_mlp` and `train_ae` first) | `outputs/checkpoints/frozen_latent_decoder.pt`, `outputs/logs/frozen_latent_decoder.json`, `outputs/figures/mlp_frozen_decoding.png`, `outputs/results/mlp_frozen_decoding.json` |
 | `python -m experiments.mlp_latent_sampling` | Step 5: fits a diagonal Gaussian to z_MLP on the test set, samples it, decodes with the frozen decoder, and scores realism (needs `experiments.mlp_frozen_decoding` first) | `outputs/figures/mlp_latent_sampling.png`, `outputs/results/mlp_latent_sampling.json` |
+| `python -m experiments.compare_models` | Part IV table: FID of 1000 samples per generator against the test set, inference latency per batch of 64, training time and loss stability from the logs, and the autoencoder test metrics (needs all training scripts first). Downloads the Inception weights (about 90 MB) on first use; the DDPM sampling is slow on a CPU but resumes if interrupted | `outputs/results/model_comparison.json`, `outputs/results/model_comparison.csv`, cached samples in `outputs/samples/` (git-ignored) |
 
 Each script is listed here once it is added.
 
@@ -69,7 +69,7 @@ Each script is listed here once it is added.
 | `models/mlp_classifier.py` | Bias-free MLP classifier with an `encode()` method returning the 64-d latent feature |
 | `train/train_mlp.py` | Training script for the MLP classifier (keeps the best epoch by validation loss) |
 | `experiments/mlp_class_projection.py` | Step 2 of the MLP experiment: class-vector back-projection through W^T and orthogonality check |
-| `metrics.py` | `reconstruction_metrics()`: test-set MSE, PSNR (per-image mean), and SSIM for any reconstruction function |
+| `metrics.py` | `reconstruction_metrics()`: test-set MSE, PSNR (per-image mean), and SSIM for any reconstruction function; `FidScorer`: FID of generated images |
 | `experiments/mlp_latent_projection.py` | Step 3 of the MLP experiment: latent transpose projection of real test images |
 | `models/vanilla_ae.py` | `VanillaAutoencoder` and the `MLPDecoder` it shares with the frozen-latent experiment |
 | `train/engine.py` | Shared training loop (`fit`): best epoch by validation loss, checkpoint, per-epoch loss and time log |
@@ -88,11 +88,14 @@ Each script is listed here once it is added.
 | `models/unet.py` | Small time-conditioned `UNet` (three resolutions, skip connections) that predicts the noise |
 | `models/ddpm.py` | `GaussianDiffusion`: linear noise schedule, noise-prediction loss, and ancestral sampling |
 | `train/train_ddpm.py` | Training script for the DDPM (EMA weights, fixed-seed validation loss) |
+| `models/zoo.py` | Loads trained checkpoints: `load_autoencoder()` and `load_prior_sampler()` (one `sample(n)` interface for VAE, GAN, DCGAN, and DDPM) |
+| `experiments/compare_models.py` | Quantitative comparison of the six models: FID, latency, training time and stability, and the Part IV table |
 | `requirements.txt` | Pinned dependencies |
 | `data/` | Downloaded dataset (git-ignored) |
 | `outputs/checkpoints/` | Model weights (git-ignored) |
 | `outputs/logs/` | Training logs as JSON |
 | `outputs/figures/` | Generated figures |
 | `outputs/results/` | Metric tables (CSV/JSON) |
+| `outputs/samples/` | Cached generated images used for FID (git-ignored) |
 
 `outputs/` subfolders are created on first write.
