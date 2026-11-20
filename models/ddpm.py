@@ -1,5 +1,7 @@
 """Denoising diffusion probabilistic model (DDPM) with a linear noise schedule."""
 
+from collections.abc import Sequence
+
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -57,8 +59,36 @@ class GaussianDiffusion(nn.Module):
         Returns:
             Images of shape (num_samples, 1, 28, 28) in [0, 1].
         """
+        return self.sample_trajectory(num_samples, ())[0]
+
+    @torch.no_grad()
+    def sample_trajectory(
+        self, num_samples: int, snapshot_steps: Sequence[int]
+    ) -> tuple[torch.Tensor, dict[int, torch.Tensor]]:
+        """Run the reverse process and keep intermediate states for visualisation.
+
+        The state x_t is indexed so that t = ``timesteps`` is the initial pure noise and
+        t = 0 is the final image.
+
+        Args:
+            num_samples: Number of images to generate.
+            snapshot_steps: Values of t (between 0 and ``timesteps``) whose state is kept.
+
+        Returns:
+            A tuple (images, snapshots): the final images of shape (num_samples, 1, 28, 28)
+            in [0, 1], and a dict mapping each requested t to its state, clamped to the
+            same range for display.
+        """
         device = self.betas.device
+        wanted = set(snapshot_steps)
+        snapshots: dict[int, torch.Tensor] = {}
+
+        def keep(t: int, state: torch.Tensor) -> None:
+            if t in wanted:
+                snapshots[t] = (state.clamp(-1.0, 1.0) + 1.0) / 2.0
+
         x = torch.randn(num_samples, 1, configs.IMAGE_SIZE, configs.IMAGE_SIZE, device=device)
+        keep(self.timesteps, x)
         for step in reversed(range(self.timesteps)):
             t = torch.full((num_samples,), step, device=device, dtype=torch.long)
             eps = self.unet(x, t)
@@ -67,4 +97,5 @@ class GaussianDiffusion(nn.Module):
             mean = (x - self.betas[step] / (1.0 - self.alpha_bars[step]).sqrt() * eps) / self.alphas[step].sqrt()
             noise = torch.randn_like(x) if step > 0 else torch.zeros_like(x)  # no noise at the last step
             x = mean + self.betas[step].sqrt() * noise
-        return (x.clamp(-1.0, 1.0) + 1.0) / 2.0
+            keep(step, x)
+        return (x.clamp(-1.0, 1.0) + 1.0) / 2.0, snapshots

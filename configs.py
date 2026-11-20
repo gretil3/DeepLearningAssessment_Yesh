@@ -55,8 +55,10 @@ SPARSE_HIDDEN_DIM: int = 256
 SPARSE_LR: float = 1e-3
 SPARSE_EPOCHS: int = 20
 # Picked from a short validation-set sweep over {0, 1e-5, 1e-4, 1e-3}: 1e-4 gives clear
-# sparsity (~56 active units) without collapse; 1e-3 zeroes almost every unit.
+# sparsity without collapse; 1e-3 zeroes almost every unit. The full 20-epoch sweep is
+# reproduced by ``python -m experiments.sparse_lambda_sweep``.
 SPARSE_LAMBDA: float = 1e-4  # weight of the L1 penalty on the code h
+SPARSE_LAMBDA_SWEEP: tuple[float, ...] = (0.0, 1e-5, 1e-4, 1e-3)  # values compared in the lambda sweep
 
 # --- Variational autoencoder (784 -> 256 -> (mu, logvar) of 64 -> 256 -> 784) ---
 VAE_HIDDEN_DIM: int = 256
@@ -108,3 +110,10 @@ LATENCY_WARMUP: int = 3  # untimed calls that absorb one-off start-up cost
 LATENCY_REPEATS: int = 20  # timed calls whose mean is reported
 LATENCY_REPEATS_DDPM: int = 1  # one 1000-step sampling run already takes minutes on a CPU
 STABILITY_TAIL_EPOCHS: int = 10  # final epochs used to summarise how settled a loss is
+
+# --- Report figures ---
+INTERPOLATION_ALPHAS: tuple[float, ...] = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
+INTERPOLATION_CLASSES: tuple[int, int] = (1, 7)  # Trouser -> Sneaker: tall versus wide silhouettes
+INTERPOLATION_CANDIDATES: int = 512  # random z drawn to find a clear example of each class (GANs)
+DDPM_TRAJECTORY_STEPS: tuple[int, ...] = (1000, 800, 600, 400, 200, 100, 50, 0)  # t = T is pure noise
+DDPM_TRAJECTORY_SAMPLES: int = 3

@@ -104,18 +104,20 @@ def nearest_real_mse(
     return dist.min(dim=1).values.mean().item()
 
 
-def plot_samples(panels: tuple[tuple[str, torch.Tensor], ...]) -> Figure:
-    """Plot several image grids side by side.
+def plot_samples(panels: tuple[tuple[str, torch.Tensor], ...], num_rows: int = 1) -> Figure:
+    """Plot several image grids, filling the panel layout row by row.
 
     Args:
         panels: Pairs of (title, images) with images of shape (>=16, 1, 28, 28).
+        num_rows: Number of panel rows (1 puts all panels side by side).
 
     Returns:
         A figure with one grid per panel.
     """
     side = configs.SAMPLING_GRID_SIDE
-    fig = plt.figure(figsize=(4.4 * len(panels), 4.8))  # near-square panels, no blank margins
-    subfigs = fig.subfigures(1, len(panels))
+    num_cols = -(-len(panels) // num_rows)  # ceiling division
+    fig = plt.figure(figsize=(4.4 * num_cols, 4.8 * num_rows))  # near-square panels, no blank margins
+    subfigs = fig.subfigures(num_rows, num_cols).flat
     for subfig, (title, images) in zip(subfigs, panels):
         subfig.suptitle(title, fontsize=10)
         axes = subfig.subplots(

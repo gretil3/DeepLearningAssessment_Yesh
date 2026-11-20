@@ -38,6 +38,25 @@ def load_autoencoder(name: str) -> nn.Module:
     return utils.load_checkpoint(builders[name](), name)
 
 
+def load_decoder(name: str) -> tuple[Callable[[torch.Tensor], torch.Tensor], int]:
+    """Return the latent-to-image network of a single-pass generator.
+
+    Args:
+        name: ``"vae"``, ``"vanilla_gan"``, or ``"dcgan"``.
+
+    Returns:
+        A tuple (decode, latent_dim): ``decode`` maps latent vectors (B, latent_dim) to
+        images (B, 1, 28, 28) in [0, 1], on ``configs.DEVICE``.
+    """
+    if name == "vae":
+        return load_autoencoder("vae").decode, configs.VAE_LATENT_DIM
+    if name == "vanilla_gan":
+        return utils.load_checkpoint(Generator(), GENERATOR_CHECKPOINTS[name]), configs.GAN_LATENT_DIM
+    if name == "dcgan":
+        return utils.load_checkpoint(DCGANGenerator(), GENERATOR_CHECKPOINTS[name]), configs.DCGAN_LATENT_DIM
+    raise ValueError(f"unknown single-pass generator: {name}")
+
+
 def load_prior_sampler(name: str) -> Callable[[int], torch.Tensor]:
     """Return a function that draws new images from a model's prior.
 
@@ -50,20 +69,9 @@ def load_prior_sampler(name: str) -> Callable[[int], torch.Tensor]:
         the full reverse process from pure noise.
     """
     if name == "ddpm":
-        diffusion = utils.load_checkpoint(GaussianDiffusion(), GENERATOR_CHECKPOINTS[name])
-        return diffusion.sample
+        return load_diffusion().sample
 
-    if name == "vae":
-        vae = load_autoencoder("vae")
-        latent_dim, decode = configs.VAE_LATENT_DIM, vae.decode
-    elif name == "vanilla_gan":
-        generator = utils.load_checkpoint(Generator(), GENERATOR_CHECKPOINTS[name])
-        latent_dim, decode = configs.GAN_LATENT_DIM, generator
-    elif name == "dcgan":
-        generator = utils.load_checkpoint(DCGANGenerator(), GENERATOR_CHECKPOINTS[name])
-        latent_dim, decode = configs.DCGAN_LATENT_DIM, generator
-    else:
-        raise ValueError(f"unknown generator: {name}")
+    decode, latent_dim = load_decoder(name)
 
     @torch.no_grad()
     def sample(num_samples: int) -> torch.Tensor:
@@ -71,3 +79,8 @@ def load_prior_sampler(name: str) -> Callable[[int], torch.Tensor]:
         return decode(z)
 
     return sample
+
+
+def load_diffusion() -> GaussianDiffusion:
+    """Load the trained DDPM (EMA weights) in eval mode."""
+    return utils.load_checkpoint(GaussianDiffusion(), GENERATOR_CHECKPOINTS["ddpm"])
