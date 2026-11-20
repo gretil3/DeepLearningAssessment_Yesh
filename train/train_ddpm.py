@@ -2,9 +2,14 @@
 
 Run from the repository root: ``python -m train.train_ddpm``. On a CPU one epoch takes
 several minutes, so for the full ``DDPM_EPOCHS`` a GPU (for example Colab) is advisable.
+
+The training state is saved after every epoch, so an interrupted run continues from the
+last finished epoch when the command is run again. A resumed run is not bit-identical to
+an uninterrupted one because the random streams restart.
 """
 
 import copy
+from pathlib import Path
 
 import torch
 from torch import nn
@@ -59,6 +64,69 @@ def validation_loss(diffusion: GaussianDiffusion, loader: DataLoader) -> float:
     return total_loss / total_items
 
 
+def _state_path() -> Path:
+    """Return the file that holds the resumable training state."""
+    return configs.CHECKPOINT_DIR / f"{MODEL_NAME}_state.pt"
+
+
+def save_training_state(
+    diffusion: GaussianDiffusion, ema_unet: nn.Module, optimizer: Adam, history: utils.TrainingHistory
+) -> None:
+    """Save everything needed to resume after the epoch that just finished.
+
+    The file is written under a temporary name and then renamed, so an interruption in
+    the middle of the write cannot leave a corrupt state behind.
+
+    Args:
+        diffusion: Diffusion model being trained.
+        ema_unet: EMA copy of the UNet.
+        optimizer: Optimizer whose moment estimates are kept.
+        history: Per-epoch losses and times recorded so far.
+    """
+    path = _state_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    torch.save(
+        {
+            "diffusion": diffusion.state_dict(),
+            "ema_unet": ema_unet.state_dict(),
+            "optimizer": optimizer.state_dict(),
+            "epoch_losses": history.epoch_losses,
+            "epoch_seconds": history.epoch_seconds,
+        },
+        tmp,
+    )
+    tmp.replace(path)
+
+
+def load_training_state(
+    diffusion: GaussianDiffusion, ema_unet: nn.Module, optimizer: Adam, history: utils.TrainingHistory
+) -> int:
+    """Restore a saved training state if one exists.
+
+    Args:
+        diffusion: Diffusion model to fill with the saved weights.
+        ema_unet: EMA copy of the UNet to fill.
+        optimizer: Optimizer to fill.
+        history: History to extend with the saved per-epoch records.
+
+    Returns:
+        The number of epochs already completed (0 when starting from scratch).
+    """
+    path = _state_path()
+    if not path.exists():
+        return 0
+    state = torch.load(path, map_location=configs.DEVICE, weights_only=True)
+    diffusion.load_state_dict(state["diffusion"])
+    ema_unet.load_state_dict(state["ema_unet"])
+    optimizer.load_state_dict(state["optimizer"])
+    history.epoch_losses.extend(state["epoch_losses"])
+    history.epoch_seconds.extend(state["epoch_seconds"])
+    completed = len(history.epoch_seconds)
+    print(f"resuming after epoch {completed} from {path.name}")
+    return completed
+
+
 def main() -> None:
     """Train the diffusion model and save the EMA weights as the checkpoint."""
     data.set_seed()
@@ -68,8 +136,9 @@ def main() -> None:
     ema_unet = copy.deepcopy(diffusion.unet).requires_grad_(False)
     optimizer = Adam(diffusion.parameters(), lr=configs.DDPM_LR)
     history = utils.TrainingHistory(MODEL_NAME)
+    completed_epochs = load_training_state(diffusion, ema_unet, optimizer, history)
 
-    for epoch in range(1, configs.DDPM_EPOCHS + 1):
+    for epoch in range(completed_epochs + 1, configs.DDPM_EPOCHS + 1):
         with utils.Timer() as timer:
             diffusion.train()
             total_loss, total_items = 0.0, 0
@@ -91,11 +160,14 @@ def main() -> None:
             f"epoch {epoch:02d}/{configs.DDPM_EPOCHS} | train loss {train_loss:.5f} | "
             f"val loss {val_loss:.5f} | {timer.elapsed:.1f}s"
         )
+        save_training_state(diffusion, ema_unet, optimizer, history)
 
     # Final weights are used as they are: the noisy diffusion loss is a poor selection signal.
     diffusion.unet.load_state_dict(ema_unet.state_dict())
     utils.save_checkpoint(diffusion, MODEL_NAME)
     history.save()
+    # A finished run must not be "resumed" by the next invocation.
+    _state_path().unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
