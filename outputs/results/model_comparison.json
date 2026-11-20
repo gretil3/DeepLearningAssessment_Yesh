@@ -1,0 +1,207 @@
+{
+  "experiment": "model_comparison",
+  "device": "cpu",
+  "latency_batch_size": 64,
+  "fid_num_samples": 1000,
+  "fid_num_real_images": 7000,
+  "fid_real_vs_real_baseline": 16.157115936279297,
+  "models": {
+    "vanilla_ae": {
+      "training": {
+        "epochs": 20,
+        "mean_epoch_seconds": 11.444755834999933,
+        "tail_epochs": 10,
+        "losses": {
+          "train_loss": {
+            "final": 0.006862971990768399,
+            "tail_mean": 0.00748838519124048,
+            "tail_relative_std": 0.0628380629821126
+          },
+          "val_loss": {
+            "final": 0.007086413881076233,
+            "tail_mean": 0.007698098038190178,
+            "tail_relative_std": 0.05887429944270896
+          }
+        }
+      },
+      "reconstruction": {
+        "model": "vanilla_ae",
+        "latent_dim": 64,
+        "mse": 0.007024189356812235,
+        "psnr": 22.610363006591797,
+        "ssim": 0.8553019762039185
+      },
+      "latency": {
+        "mean_ms": 0.3335350025736261,
+        "std_ms": 0.1250858431245064,
+        "repeats": 20
+      }
+    },
+    "sparse_ae": {
+      "training": {
+        "epochs": 20,
+        "mean_epoch_seconds": 9.4216441449993,
+        "tail_epochs": 10,
+        "losses": {
+          "train_loss": {
+            "final": 0.009179280281066895,
+            "tail_mean": 0.009901397602898734,
+            "tail_relative_std": 0.054147691419516496
+          },
+          "val_loss": {
+            "final": 0.00940639355885131,
+            "tail_mean": 0.010094886291133507,
+            "tail_relative_std": 0.05125056971259217
+          }
+        }
+      },
+      "reconstruction": {
+        "model": "sparse_ae",
+        "code_dim": 256,
+        "lambda": 0.0001,
+        "mse": 0.006925414516348881,
+        "psnr": 22.51604652404785,
+        "ssim": 0.7977598309516907,
+        "mean_l1_norm": 24.738703683035713,
+        "zero_fraction": 0.6837862723214285,
+        "mean_active_units": 80.9507142857143
+      },
+      "latency": {
+        "mean_ms": 0.2429649990517646,
+        "std_ms": 0.0111472997703734,
+        "repeats": 20
+      }
+    },
+    "vae": {
+      "training": {
+        "epochs": 20,
+        "mean_epoch_seconds": 7.675156450000941,
+        "tail_epochs": 10,
+        "losses": {
+          "train_loss": {
+            "final": 241.8963360595703,
+            "tail_mean": 242.90148194754465,
+            "tail_relative_std": 0.003003328495222948
+          },
+          "val_loss": {
+            "final": 242.89467068917412,
+            "tail_mean": 243.89269340994696,
+            "tail_relative_std": 0.002741834078773025
+          }
+        }
+      },
+      "reconstruction": {
+        "model": "vae",
+        "latent_dim": 64,
+        "kl_weight": 1.0,
+        "test_neg_elbo": 243.1832853655134,
+        "mse": 0.013666510023111504,
+        "psnr": 19.4752254486084,
+        "ssim": 0.7607697248458862,
+        "mean_kl_per_image": 15.714372634887695,
+        "active_latent_dims": 16
+      },
+      "fid": 100.72528839111328,
+      "latency": {
+        "mean_ms": 0.32401000207755715,
+        "std_ms": 0.0775324182088999,
+        "repeats": 20
+      }
+    },
+    "vanilla_gan": {
+      "training": {
+        "epochs": 50,
+        "mean_epoch_seconds": 27.936259464000067,
+        "tail_epochs": 10,
+        "losses": {
+          "d_loss": {
+            "final": 1.2311729788099017,
+            "tail_mean": 1.226929802771977,
+            "tail_relative_std": 0.0025705162514799516
+          },
+          "g_loss": {
+            "final": 0.9758075606482369,
+            "tail_mean": 0.983268834250314,
+            "tail_relative_std": 0.007068179616819542
+          },
+          "d_real": {
+            "final": 0.5699987967014313,
+            "tail_mean": 0.5720135850736072,
+            "tail_relative_std": 0.0026148677170313795
+          },
+          "d_fake": {
+            "final": 0.42989468240737916,
+            "tail_mean": 0.42784221919264115,
+            "tail_relative_std": 0.003734536189833412
+          }
+        }
+      },
+      "fid": 122.98231506347656,
+      "latency": {
+        "mean_ms": 1.263979999203002,
+        "std_ms": 0.0605585632067937,
+        "repeats": 20
+      }
+    },
+    "dcgan": {
+      "training": {
+        "epochs": 50,
+        "mean_epoch_seconds": 71.68977882600008,
+        "tail_epochs": 10,
+        "losses": {
+          "d_loss": {
+            "final": 1.0490765180587769,
+            "tail_mean": 1.0685838576589313,
+            "tail_relative_std": 0.012740804389393467
+          },
+          "g_loss": {
+            "final": 1.2380894536972047,
+            "tail_mean": 1.2024586111579623,
+            "tail_relative_std": 0.017780602776669176
+          },
+          "d_real": {
+            "final": 0.6283482530457632,
+            "tail_mean": 0.6213783411570958,
+            "tail_relative_std": 0.007119327630786192
+          },
+          "d_fake": {
+            "final": 0.37116045553343635,
+            "tail_mean": 0.37813119579638754,
+            "tail_relative_std": 0.011818569002969405
+          }
+        }
+      },
+      "fid": 34.536582946777344,
+      "latency": {
+        "mean_ms": 7.555615001911065,
+        "std_ms": 1.5463128777524564,
+        "repeats": 20
+      }
+    },
+    "ddpm": {
+      "training": {
+        "epochs": 15,
+        "mean_epoch_seconds": 407.9429711133329,
+        "tail_epochs": 10,
+        "losses": {
+          "train_loss": {
+            "final": 0.040237070117677964,
+            "tail_mean": 0.04253790537544659,
+            "tail_relative_std": 0.03504341496074919
+          },
+          "val_loss": {
+            "final": 0.04083807371131012,
+            "tail_mean": 0.0424190060538905,
+            "tail_relative_std": 0.03036518278559348
+          }
+        }
+      },
+      "fid": 35.7550048828125,
+      "latency": {
+        "mean_ms": 121635.62790000287,
+        "std_ms": 0.0,
+        "repeats": 1
+      }
+    }
+  }
+}

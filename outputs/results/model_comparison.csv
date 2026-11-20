@@ -1,0 +1,7 @@
+model,latent_dim,epochs,train_seconds_per_epoch,latency_ms_batch64,latency_op,test_mse,test_psnr_db,test_ssim,fid
+Vanilla Autoencoder,64,20,11.44,0.33,reconstruction,0.007024,22.61,0.8553,N/A
+Sparse Autoencoder,256,20,9.42,0.24,reconstruction,0.006925,22.52,0.7978,N/A
+VAE,64,20,7.68,0.32,generation,0.013667,19.48,0.7608,100.73
+Vanilla GAN,100,50,27.94,1.26,generation,N/A,N/A,N/A,122.98
+DCGAN,100,50,71.69,7.56,generation,N/A,N/A,N/A,34.54
+DDPM,28x28 (image space),15,407.94,121635.63,generation,N/A,N/A,N/A,35.76
