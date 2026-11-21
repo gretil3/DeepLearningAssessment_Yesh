@@ -1,0 +1,44 @@
+# --- Dataset and model weights (large, reproducible) ---
+/data/
+outputs/checkpoints/
+*.pt
+*.pth
+
+# --- Python artifacts ---
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# --- Secrets ---
+.env
+
+# --- Experiment trackers and raw logs (JSON logs in outputs/logs/ stay tracked) ---
+runs/
+wandb/
+*.log
+
+# --- Local tool and editor config ---
+CLAUDE.md
+.claude/
+.vscode/
+.idea/
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Archives (e.g. zips made for Colab uploads) ---
+*.zip
+
+# --- Assignment brief: kept locally, not part of the deliverable ---
+Tugas Take Home*.pdf
+
+# --- Report drafts and sources: only the final PDF is committed ---
+*.docx
+Claude outputs/
